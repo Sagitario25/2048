@@ -74,10 +74,11 @@ class Gestor:
 	def moveUp (self, inputGrid):
 		gridSize = getGridSize (inputGrid)
 		self.grid = inputGrid
+		self.aviableGrid = newAviableGrid (self.grid)
 		for x in range (0, gridSize):
 			for y in range (0, gridSize):
 				if self.grid [x][y].value != 0:
-					self.grid = self.grid[x][y].moveUp(self.grid)
+					self.grid, self.aviableGrid = self.grid[x][y].moveUp(self.grid, self.aviableGrid)
 		return self.grid
 
 	def moveDown (self, inputGrid):
@@ -108,22 +109,27 @@ class Cuadro:
 			elif self.grid [self.counter][self.y].value != self.grid [self.x][self.y].value:
 				self.counter += 1
 				break
-			if self.grid [self.counter][self.y].value == self.grid [self.x][self.y].value:
-				break
 			if not self.aviableGrid [self.counter][self.y]:
 				self.counter += 1
+				break
+			if self.grid [self.counter][self.y].value == self.grid [self.x][self.y].value:
 				break
 		if self.counter < 0:
 			self.counter = 0
 		#Change values
 		if self.counter != self.x:
+			if self.grid [self.counter][self.y].value != 0:
+				self.aviableGrid [self.counter][self.y] = False
 			self.grid [self.counter][self.y].value +=  self.grid [self.x][self.y].value
-			self.aviableGrid [self.counter][self.y] = False
 			self.grid [self.x][self.y].value = 0
 		return self.grid, self.aviableGrid
 
-	def moveUp (self, inputGrid):
+	def moveUp (self, inputGrid, aviableGrid):
 		self.grid = inputGrid
+		self.aviableGrid = aviableGrid
+		if self.aviableGrid == None:
+			self.aviableGrid = newAviableGrid (self.grid)
+
 		#Get moving point
 		self.counter = self.y - 1
 		while True:
@@ -134,15 +140,20 @@ class Cuadro:
 			elif self.grid [self.x][self.counter].value != self.grid [self.x][self.y].value:
 				self.counter += 1
 				break
+			if not self.aviableGrid [self.x][self.counter]:
+				self.counter += 1
+				break
 			if self.grid [self.x][self.counter].value == self.grid [self.x][self.y].value:
 				break
 		if self.counter < 0:
 			self.counter = 0
 		#Change values
 		if self.counter != self.y:
+			if self.grid [self.x][self.counter].value != 0:
+				self.aviableGrid [self.x][self.counter] = False
 			self.grid [self.x][self.counter].value +=  self.grid [self.x][self.y].value
 			self.grid [self.x][self.y].value = 0
-		return self.grid
+		return self.grid, self.aviableGrid
 
 
 def display (inputGrid):
@@ -202,8 +213,8 @@ def start (size):
 	controller = Gestor ()
 	#startingGrid = controller.newRandom (startingGrid)
 	#startingGrid = controller.newRandom (startingGrid)
-	startingGrid[0][0].value = 4 
+	startingGrid[2][0].value = 4 
+	startingGrid[0][0].value = 2 
 	startingGrid[1][0].value = 2 
-	startingGrid[2][0].value = 2 
 	display (startingGrid)
 	return startingGrid
