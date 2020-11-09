@@ -22,6 +22,17 @@ def invertX (inputGrid):
 			outputGrid [x][y].value = inputGrid [gridSize - x - 1][y].value
 	return outputGrid
 
+def getGridSize (inputGrid):
+	return len (inputGrid)
+
+def newAviableGrid (inputGrid):
+	gridSize = getGridSize (inputGrid)
+	aviableGrid = []
+	for x in range (0, gridSize):
+		aviableGrid.append ([])
+		for y in range (0, gridSize):
+			aviableGrid [x].append (True)
+	return aviableGrid
 
 class Gestor:
 	def __init__ (self):
@@ -47,10 +58,11 @@ class Gestor:
 	def moveLeft (self, inputGrid):
 		gridSize = getGridSize (inputGrid)
 		self.grid = inputGrid
+		self.aviableGrid = newAviableGrid (self.grid)
 		for y in range (0, gridSize):
 			for x in range (0, gridSize):
 				if self.grid [x][y].value != 0:
-					self.grid = self.grid[x][y].moveLeft(self.grid)
+					self.grid, self.aviableGrid = self.grid[x][y].moveLeft(self.grid, self.aviableGrid)
 		return self.grid
 
 	def moveRight (self, inputGrid):
@@ -80,8 +92,12 @@ class Cuadro:
 		self.y = y
 		self.value = value
 
-	def moveLeft (self, inputGrid):
+	def moveLeft (self, inputGrid, aviableGrid):
 		self.grid = inputGrid
+		self.aviableGrid = aviableGrid
+		if self.aviableGrid == None:
+			self.aviableGrid = newAviableGrid (self.grid)
+
 		#Get moving point
 		self.counter = self.x - 1
 		while True:
@@ -94,13 +110,17 @@ class Cuadro:
 				break
 			if self.grid [self.counter][self.y].value == self.grid [self.x][self.y].value:
 				break
+			if not self.aviableGrid [self.counter][self.y]:
+				self.counter += 1
+				break
 		if self.counter < 0:
 			self.counter = 0
 		#Change values
 		if self.counter != self.x:
 			self.grid [self.counter][self.y].value +=  self.grid [self.x][self.y].value
+			self.aviableGrid [self.counter][self.y] = False
 			self.grid [self.x][self.y].value = 0
-		return self.grid
+		return self.grid, self.aviableGrid
 
 	def moveUp (self, inputGrid):
 		self.grid = inputGrid
@@ -187,6 +207,3 @@ def start (size):
 	startingGrid[2][0].value = 2 
 	display (startingGrid)
 	return startingGrid
-
-def getGridSize (inputGrid):
-	return len (inputGrid)
