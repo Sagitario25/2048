@@ -211,10 +211,7 @@ def start (size):
 		for y in range (0, gridSize):
 			startingGrid [x].append (Cuadro (x, y))
 	controller = Gestor ()
-	#startingGrid = controller.newRandom (startingGrid)
-	#startingGrid = controller.newRandom (startingGrid)
-	startingGrid[2][0].value = 4 
-	startingGrid[0][0].value = 2 
-	startingGrid[1][0].value = 2 
+	startingGrid = controller.newRandom (startingGrid)
+	startingGrid = controller.newRandom (startingGrid)
 	display (startingGrid)
 	return startingGrid

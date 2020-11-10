@@ -1,0 +1,25 @@
+1.Esquina maestra
+2.Direccion maestra
+3.Bloquear la columna maestra perpendicular a la direccion maestra
+4.Escalera en la columna maestra
+5.Cambia la dirreccion de trabajo
+6.Dobles bloqueos: A favor y encontra de la direccion de trabajo
+7.Recoje la escalera
+8.Continua la escalera en la segunda columna
+9.Triple bloqueo: En contra y a favor de la direccion maestra
+10.Lidiar con un falso lider
+	a.Convertir al falso lider en lider
+	b.Convertir al falso lider en zombie
+11.Eliminar una baldosa zombie, mala suerte :(
+12.Haz movimientos arriesgados apartir del 1024
+
+Peligros:
+	6.Doble bloqueo: En contra y a favor de la direccion de trabajo
+	9.Triple bloqueo: En contra y a favor de la direccion de trabajo
+	10.Falso lider: Si el lider es pequeño conviertelo en lider
+
+Despejado:
+	3, 4 y 8.Bloquear la columna maestra creando una escalera, siguela en la siguiente columna si hace falta
+	5.Cambia la direccion de trabajo segun donde esta el final de la escalera
+	7.Si la escalera no se puede alargar mas recogela
+	

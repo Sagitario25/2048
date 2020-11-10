@@ -6,8 +6,10 @@ import keyboard
 import motor
 tamanoCuadricula = 4
 
+class Exception (Exception):
+	pass
 
-def move (direction, inputGrid, screen = True):
+def move (direction, inputGrid, screen = True, newRandom = True):
 	previousValues = motor.getValues (inputGrid.copy ())
 
 	if direction == "left":
@@ -19,13 +21,13 @@ def move (direction, inputGrid, screen = True):
 	elif direction == "down":
 		inputGrid = controller.moveDown (inputGrid)
 	else:
-		print ("Eso no es una dirrecion correcta")
+		raise Exception ("Invalid direction")
 
 	random = not motor.compare (previousValues, motor.getValues (inputGrid.copy ()))
-	if random:
+	if random and newRandom:
 		inputGrid = controller.newRandom (inputGrid.copy ())
 	if screen:
-		#display (inputGrid)
+		motor.display (inputGrid)
 		pass
 	return inputGrid, random
 
@@ -37,14 +39,14 @@ down = True
 grid = motor.start (tamanoCuadricula)
 controller = motor.Gestor ()
 
-while True:
-	directions = ['left', 'right', 'up', 'down']
+def emptySpaces (inputGrid):
+	directions = ['right', 'up', 'down', 'left']
 	apt = []
 	options = []
 	values = []
 	empty = []
 	for i in directions:
-		returned = move (i, grid, False)
+		returned = move (i, inputGrid, screen = False)
 		options.append (returned [0])
 		apt.append (returned [1])
 	for i in options:
@@ -57,13 +59,24 @@ while True:
 					empty[x] += 1
 	empty = empty [:tamanoCuadricula]
 
-	maximum = -1
-	for i in range (len (empty)):
-		if empty [i] > maximum and apt[i]:
-			maximum = empty [i]
+	maximum = max (empty)
+	return empty.index (maximum)
+
+def priority (inputGrid):
+	directions = ['left', 'down', 'up', 'right']
+	for i in directions:
+		waste, result = move (i, inputGrid, screen = False)
+		if result:
+			return i
+
+def bestTry(inputGrid):
+	pass
+
+while True:
+	dirs = priority (grid)
 
 	try:
-		grid, waste = move (directions [empty.index (maximum)], grid)
+		grid, waste = move (dirs, grid)
 		#print (directions [empty.index (max)])
 	except:
 		motor.display (grid)
@@ -74,13 +87,13 @@ while True:
 			maxList.append (max (i))
 		print (f"El mejor bloque es {max (maxList)}")
 
-		time.sleep (0.5)
+		#time.sleep (0.5)
 		grid = motor.start (tamanoCuadricula)
 	values = motor.getValues (grid)
 	for x in range (tamanoCuadricula):
 		for y in range (tamanoCuadricula):
 			if values [x][y] == 2048:
-				display (grid)
+				motor.display (grid)
 				print ("Has ganado")
 				while True:
 					pass
