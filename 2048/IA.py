@@ -46,7 +46,7 @@ def emptySpaces (inputGrid):
 	values = []
 	empty = []
 	for i in directions:
-		returned = move (i, inputGrid, screen = False)
+		returned, _ = move (i, inputGrid, screen = False)
 		options.append (returned [0])
 		apt.append (returned [1])
 	for i in options:
@@ -69,16 +69,53 @@ def priority (inputGrid):
 		if result:
 			return i
 
-def bestTry(inputGrid):
-	pass
+class bestTry:
+	def __init__ (self):
+		self.directions = ['left', 'right', 'up', 'down']
+		self.aviability = {}
 
+	def next (self, inputGrid):
+		self.grid = inputGrid
+		self.aviable = []
+		self.unaviable = 0
+		for i in self.directions:
+			_, self.temp = move (i, self.grid, screen = False, newRandom = False)
+			self.aviable.append (self.temp)
+			if self.temp:
+				self.unaviable += 1
+
+		if self.unaviable == 2:#Doble bloqueo
+			self.grid, _ = move ("up", move ("down", self.grid, screen = False)[0], screen = False)
+			print ("double")
+			return self.grid
+		elif self.unaviable == 3:#Triple bloqueo
+			self.grid, _ = move ("left", move ("right", self.grid, screen = False)[0], screen = False)
+			print ("triple")
+			return self.grid
+		else:
+			if self.aviable [self.directions.index ('left')]:
+				self.grid, _ = move ("left", self.grid, screen = False)
+				print ("good1")
+			elif self.aviable [self.directions.index ('up')]:
+				self.grid, _ = move ("up", self.grid, screen = False)
+				print ("good2")
+			else:
+				self.grid, _ = move ("down", self.grid, screen = False)
+				print ("good3")
+			return self.grid
+
+
+best = bestTry ()
 while True:
-	dirs = priority (grid)
+	#dirs = priority (grid)
 
 	try:
-		grid, waste = move (dirs, grid)
+		#grid, _ = move (dirs, grid)
+		grid = best.next (grid)
+		motor.display (grid)
 		#print (directions [empty.index (max)])
-	except:
+	except Exception:
+		print (Exception)
 		motor.display (grid)
 		print ("Has perdido")
 		values = motor.getValues (grid)

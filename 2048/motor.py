@@ -158,7 +158,7 @@ class Cuadro:
 
 def display (inputGrid):
 	gridSize = getGridSize (inputGrid)
-	os.system ('cls')
+	#os.system ('cls')
 	values = []
 	for x in range (0, gridSize):
 		values.append ([])
